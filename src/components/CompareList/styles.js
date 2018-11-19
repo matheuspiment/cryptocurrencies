@@ -7,7 +7,7 @@ export const Container = styled.div`
   justify-content: center;
 `;
 
-export const Repository = styled.div`
+export const Cryptocurrency = styled.div`
   background: #FFF;
   border-radius: 3px;
   display: flex;

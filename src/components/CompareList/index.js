@@ -3,19 +3,19 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import moment from 'moment';
 
-import { Container, Repository } from './styles';
+import { Container, Cryptocurrency } from './styles';
 
 const formatCurrency = value =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
-const CompareList = ({ removeRepository, cryptocurrencies }) => (
+const CompareList = ({ removeCryptocurrency, cryptocurrencies }) => (
   <Container>
     { cryptocurrencies.map(cryptocurrency => (
-      <Repository key={cryptocurrency.id}>
+      <Cryptocurrency key={cryptocurrency.id}>
         <header>
           <button
             type="button"
-            onClick={() => removeRepository(cryptocurrency.id)}
+            onClick={() => removeCryptocurrency(cryptocurrency.id)}
           >
             <i className="fa fa-close" />
           </button>
@@ -39,13 +39,13 @@ const CompareList = ({ removeRepository, cryptocurrencies }) => (
             <i className="fa fa-clock-o" /> {moment.unix(cryptocurrency.last_updated).fromNow()} <small>last update</small>
           </li>
         </ul>
-      </Repository>
+      </Cryptocurrency>
     )) }
   </Container>
 );
 
 CompareList.propTypes = {
-  removeRepository: PropTypes.func.isRequired,
+  removeCryptocurrency: PropTypes.func.isRequired,
   cryptocurrencies: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
     name: PropTypes.string,
