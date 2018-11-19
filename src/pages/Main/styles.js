@@ -11,6 +11,12 @@ export const Container = styled.div`
     font-weight: bold;
     text-transform: uppercase;
   }
+
+  > i {
+    justify-self: center;
+    font-size: 32px;
+    color: #FFF;
+  }
 `;
 
 export const Form = styled.form`

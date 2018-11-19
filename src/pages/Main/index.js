@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
+import Notify from 'notifyjs';
 
 import { Container, Form } from './styles';
 
@@ -28,6 +30,34 @@ export default class Main extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.targetCryptocurrencies !== prevState.targetCryptocurrencies) {
+      const cryptocurrenciesUpdated = _.differenceBy(
+        this.state.targetCryptocurrencies,
+        prevState.targetCryptocurrencies,
+        'quotes.USD.price',
+      );
+
+      const toNotify = cryptocurrenciesUpdated.filter(cryptocurrency =>
+        cryptocurrency.quotes.USD.percent_change_24h <= -10
+        || cryptocurrency.quotes.USD.percent_change_24h >= 0.2);
+
+      const notifications = toNotify.map(cryptocurrency =>
+        new Notify(
+          cryptocurrency.name,
+          {
+            body: cryptocurrency.quotes.USD.percent_change_24h < 0
+              ? `This cryptocurrency fell ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`
+              : `This cryptocurrency rose ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`,
+          },
+        ));
+
+      _.forEach(notifications, (notification) => {
+        this.handleNotification(notification);
+      });
+    }
+  }
+
   componentWillUnmount() {
     clearInterval(this.update);
   }
@@ -53,6 +83,15 @@ export default class Main extends Component {
       || cryptocurrency.name === cryptocurrencyQuery
       || cryptocurrency.website_slug === cryptocurrencyQuery
       || cryptocurrency.symbol === cryptocurrencyQuery);
+
+
+  handleNotification = (notification) => {
+    if (!Notify.needsPermission) {
+      notification.show();
+    } else if (Notify.isSupported()) {
+      Notify.requestPermission(console.log('A'), console.log('B'));
+    }
+  }
 
   handleAddCryptocurrency = async (e) => {
     e.preventDefault();
@@ -116,6 +155,14 @@ export default class Main extends Component {
   }
 
   render() {
+    if (this.state.cryptocurrencies.length === 0) {
+      return (
+        <Container>
+          <i className="fa fa-spinner fa-pulse" />
+        </Container>
+      );
+    }
+
     return (
       <Container>
         <h1>Cryptocurrencies</h1>
@@ -133,7 +180,7 @@ export default class Main extends Component {
         </Form>
 
         <CompareList
-          removeRepository={this.handleRemoveCryptocurrency}
+          removeCryptocurrency={this.handleRemoveCryptocurrency}
           cryptocurrencies={this.state.targetCryptocurrencies}
         />
       </Container>
