@@ -6,6 +6,7 @@ import { Container, Form } from './styles';
 
 import api from '../../services/api';
 import CompareList from '../../components/CompareList';
+import logo from '../../assets/logo.png';
 
 export default class Main extends Component {
   state = {
@@ -46,6 +47,7 @@ export default class Main extends Component {
         new Notify(
           cryptocurrency.name,
           {
+            icon: logo,
             body: cryptocurrency.quotes.USD.percent_change_24h < 0
               ? `This cryptocurrency fell ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`
               : `This cryptocurrency rose ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`,
