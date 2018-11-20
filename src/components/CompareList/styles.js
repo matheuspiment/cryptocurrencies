@@ -1,10 +1,14 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-rows: 303px;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  margin-top: 60px;
+  width: 85%;
+  max-width: 1240px;
 `;
 
 export const Cryptocurrency = styled.div`
@@ -12,9 +16,7 @@ export const Cryptocurrency = styled.div`
   border-radius: 3px;
   display: flex;
   flex-direction: column;
-  margin: 0 10px;
-  margin-top: 50px;
-  width: 250px;
+  justify-content: space-between;
 
   header {
     align-items: center;
@@ -58,6 +60,7 @@ export const Cryptocurrency = styled.div`
     strong {
       font-size: 24px;
       margin-top: 10px;
+      text-align: center;
     }
 
     small {
