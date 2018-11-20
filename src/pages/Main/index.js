@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import Notify from 'notifyjs';
 
 import { Container, Form } from './styles';
 
 import api from '../../services/api';
 import CompareList from '../../components/CompareList';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo-24.png';
+import handleNotification from '../../utils/handleNotification';
 
 export default class Main extends Component {
   state = {
@@ -44,18 +44,20 @@ export default class Main extends Component {
         || cryptocurrency.quotes.USD.percent_change_24h >= 0.2);
 
       const notifications = toNotify.map(cryptocurrency =>
-        new Notify(
-          cryptocurrency.name,
-          {
+        ({
+          title: cryptocurrency.name,
+          options: {
+            lang: 'en-US',
             icon: logo,
+            badge: logo,
             body: cryptocurrency.quotes.USD.percent_change_24h < 0
               ? `This cryptocurrency fell ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`
               : `This cryptocurrency rose ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`,
           },
-        ));
+        }));
 
       _.forEach(notifications, (notification) => {
-        this.handleNotification(notification);
+        handleNotification(notification);
       });
     }
   }
@@ -85,15 +87,6 @@ export default class Main extends Component {
       || cryptocurrency.name === cryptocurrencyQuery
       || cryptocurrency.website_slug === cryptocurrencyQuery
       || cryptocurrency.symbol === cryptocurrencyQuery);
-
-
-  handleNotification = (notification) => {
-    if (!Notify.needsPermission) {
-      notification.show();
-    } else if (Notify.isSupported()) {
-      Notify.requestPermission(console.log('A'), console.log('B'));
-    }
-  }
 
   handleAddCryptocurrency = async (e) => {
     e.preventDefault();

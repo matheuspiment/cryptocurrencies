@@ -9,7 +9,6 @@
     "font-awesome": "^4.7.0",
     "lodash": "^4.17.11",
     "moment": "^2.22.1",
-    "notifyjs": "^3.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
