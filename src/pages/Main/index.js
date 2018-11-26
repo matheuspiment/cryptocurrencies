@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 
-import { Container, Form } from './styles';
+import { Container, FloatButton } from './styles';
 
 import api from '../../services/api';
 import CompareList from '../../components/CompareList';
 import logo from '../../assets/logo-24.png';
 import handleNotification from '../../utils/handleNotification';
+import CryptocurrencyForm from './CryptocurrencyForm';
 
 export default class Main extends Component {
   state = {
@@ -15,13 +16,14 @@ export default class Main extends Component {
     cryptocurrencyInput: '',
     cryptocurrencies: [],
     targetCryptocurrencies: [],
+    isFormOpen: false,
   }
 
   async componentDidMount() {
     this.update = setInterval(this.updateTargetCryptocurrencies, 30000);
 
     try {
-      const { data } = await api.get('/url/?url=https://api.coinmarketcap.com/v2/listings/');
+      const { data } = await api.get('/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/map');
 
       this.setState({
         cryptocurrencies: [...this.state.cryptocurrencies, ...data.data],
@@ -36,12 +38,12 @@ export default class Main extends Component {
       const cryptocurrenciesUpdated = _.differenceBy(
         this.state.targetCryptocurrencies,
         prevState.targetCryptocurrencies,
-        'quotes.USD.price',
+        'quote.USD.price',
       );
 
       const toNotify = cryptocurrenciesUpdated.filter(cryptocurrency =>
-        cryptocurrency.quotes.USD.percent_change_24h <= -10
-        || cryptocurrency.quotes.USD.percent_change_24h >= 0.2);
+        cryptocurrency.quote.USD.percent_change_24h <= -10
+        || cryptocurrency.quote.USD.percent_change_24h >= 0.2);
 
       const notifications = toNotify.map(cryptocurrency =>
         ({
@@ -50,9 +52,9 @@ export default class Main extends Component {
             lang: 'en-US',
             icon: logo,
             badge: logo,
-            body: cryptocurrency.quotes.USD.percent_change_24h < 0
-              ? `This cryptocurrency fell ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`
-              : `This cryptocurrency rose ${Math.abs(cryptocurrency.quotes.USD.percent_change_24h)}% in 24h`,
+            body: cryptocurrency.quote.USD.percent_change_24h < 0
+              ? `This cryptocurrency fell ${Math.abs(cryptocurrency.quote.USD.percent_change_24h)}% in 24h`
+              : `This cryptocurrency rose ${Math.abs(cryptocurrency.quote.USD.percent_change_24h)}% in 24h`,
           },
         }));
 
@@ -74,10 +76,13 @@ export default class Main extends Component {
 
   updateTargetCryptocurrencies = async () => {
     const responses = await Promise.all(this.state.targetCryptocurrencies.map(cryptocurrency =>
-      api.get(`/url/?url=https://api.coinmarketcap.com/v2/ticker/${cryptocurrency.id}`)));
+      api.get(`/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${cryptocurrency.id}`)));
 
     this.setState({
-      targetCryptocurrencies: responses.map(response => ({ ...response.data.data })),
+      targetCryptocurrencies: responses.map((response) => {
+        const id = _.keys(response.data.data)[0];
+        return { ...response.data.data[id] };
+      }),
     });
   }
 
@@ -126,12 +131,17 @@ export default class Main extends Component {
         return;
       }
 
-      const { data } = await api.get(`/url/?url=https://api.coinmarketcap.com/v2/ticker/${cryptocurrency[0].id}`);
+      const { data } = await api.get(`/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${cryptocurrency[0].id}`);
+
+      this.toogleForm();
 
       this.setState({
         cryptocurrencyError: false,
         cryptocurrencyInput: '',
-        targetCryptocurrencies: [...this.state.targetCryptocurrencies, { ...data.data }],
+        targetCryptocurrencies: [
+          ...this.state.targetCryptocurrencies,
+          { ...data.data[cryptocurrency[0].id] },
+        ],
       });
     } catch (err) {
       this.setState({ cryptocurrencyError: true });
@@ -149,6 +159,12 @@ export default class Main extends Component {
     });
   }
 
+  toogleForm = () => {
+    this.setState({
+      isFormOpen: !this.state.isFormOpen,
+    });
+  }
+
   render() {
     if (this.state.cryptocurrencies.length === 0) {
       return (
@@ -162,22 +178,24 @@ export default class Main extends Component {
       <Container>
         <h1>Cryptocurrencies</h1>
 
-        <Form withError={this.state.cryptocurrencyError} onSubmit={this.handleAddCryptocurrency}>
-          <input
-            type="text"
-            placeholder="cryptocurrency name/slug"
-            value={this.state.cryptocurrencyInput}
-            onChange={e => this.setState({ cryptocurrencyInput: e.target.value })}
-          />
-          <button type="submit">
-            {this.state.loading ? <i className="fa fa-spinner fa-pulse" /> : 'OK'}
-          </button>
-        </Form>
-
         <CompareList
           removeCryptocurrency={this.handleRemoveCryptocurrency}
           cryptocurrencies={this.state.targetCryptocurrencies}
         />
+
+        <CryptocurrencyForm
+          isOpen={this.state.isFormOpen}
+          onSubmit={this.handleAddCryptocurrency}
+          onChange={e => this.setState({ cryptocurrencyInput: e.target.value })}
+          value={this.state.cryptocurrencyInput}
+          withError={this.state.cryptocurrencyError}
+          isLoading={this.state.loading}
+          toogleForm={() => this.toogleForm()}
+        />
+
+        <FloatButton onClick={() => this.toogleForm()}>
+          <i className="fa fa-plus" />
+        </FloatButton>
       </Container>
     );
   }

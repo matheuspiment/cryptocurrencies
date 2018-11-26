@@ -9,7 +9,6 @@ export const Container = styled.div`
   h1 {
     color: #FFF;
     font-weight: bold;
-    text-transform: uppercase;
   }
 
   > i {
@@ -19,37 +18,19 @@ export const Container = styled.div`
   }
 `;
 
-export const Form = styled.form`
-  display: flex;
-  margin-top: 20px;
-  max-width: 400px;
-  width: 100%;
+export const FloatButton = styled.button`
+  bottom: 15px;
+  right: 15px;
+  position: fixed;
+  width: 62px;
+  height: 62px;
+  border: none;
+  border-radius: 100%;
+  background-color: #27CE7A;
+  box-shadow: 0 5px 4px 0 rgba(0,0,0,.26);
 
-  input {
-    background: #FFF;
-    border: ${props => (props.withError ? '2px solid #F00' : 0)};
-    border-radius: 3px;
-    color: #444;
-    flex: 1;
-    font-size: 18px;
-    height: 55px;
-    padding: 0 20px;
-  }
-
-  button {
-    background: #63F5B8;
-    border: 0;
-    border-radius: 3px;
+  > i {
+    font-size: 24px;
     color: #FFF;
-    font-size: 20px;
-    font-weight: bold;
-    height: 55px;
-    margin-left: 10px;
-    padding: 0 20px;
-    width: 80px;
-
-    &:hover {
-      background: #52D89F;
-    }
   }
 `;

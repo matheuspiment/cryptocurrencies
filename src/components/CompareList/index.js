@@ -23,20 +23,20 @@ const CompareList = ({ removeCryptocurrency, cryptocurrencies }) => (
             <span>{cryptocurrency.symbol}</span>
           </div>
           <strong>{cryptocurrency.name}</strong>
-          <small>{formatCurrency(cryptocurrency.quotes.USD.price)}</small>
+          <small>{formatCurrency(cryptocurrency.quote.USD.price)}</small>
         </header>
 
         <ul>
           <li className={
             classNames(
-              { up: cryptocurrency.quotes.USD.percent_change_24h > 0 },
-              { down: cryptocurrency.quotes.USD.percent_change_24h < 0 },
+              { up: cryptocurrency.quote.USD.percent_change_24h > 0 },
+              { down: cryptocurrency.quote.USD.percent_change_24h < 0 },
             )}
           >
-            <i className="fa fa-line-chart" /> {cryptocurrency.quotes.USD.percent_change_24h}% <small>change (24h)</small>
+            <i className="fa fa-line-chart" /> {cryptocurrency.quote.USD.percent_change_24h}% <small>change (24h)</small>
           </li>
           <li>
-            <i className="fa fa-clock-o" /> {moment.unix(cryptocurrency.last_updated).fromNow()} <small>last update</small>
+            <i className="fa fa-clock-o" /> {moment(cryptocurrency.last_updated).fromNow()} <small>last update</small>
           </li>
         </ul>
       </Cryptocurrency>
@@ -50,13 +50,13 @@ CompareList.propTypes = {
     id: PropTypes.number,
     name: PropTypes.string,
     symbol: PropTypes.string,
-    quotes: PropTypes.shape({
+    quote: PropTypes.shape({
       USD: PropTypes.shape({
         price: PropTypes.number,
         percent_change_24h: PropTypes.number,
       }),
     }),
-    last_updated: PropTypes.number,
+    last_updated: PropTypes.string,
   })).isRequired,
 };
 
