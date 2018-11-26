@@ -23,7 +23,7 @@ export default class Main extends Component {
     this.update = setInterval(this.updateTargetCryptocurrencies, 30000);
 
     try {
-      const { data } = await api.get('/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/map');
+      const { data } = await api.get('/cryptocurrency/map');
 
       this.setState({
         cryptocurrencies: [...this.state.cryptocurrencies, ...data.data],
@@ -76,7 +76,7 @@ export default class Main extends Component {
 
   updateTargetCryptocurrencies = async () => {
     const responses = await Promise.all(this.state.targetCryptocurrencies.map(cryptocurrency =>
-      api.get(`/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${cryptocurrency.id}`)));
+      api.get(`/cryptocurrency/quotes/latest?id=${cryptocurrency.id}`)));
 
     this.setState({
       targetCryptocurrencies: responses.map((response) => {
@@ -131,7 +131,7 @@ export default class Main extends Component {
         return;
       }
 
-      const { data } = await api.get(`/url/?url=https://sandbox-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=${cryptocurrency[0].id}`);
+      const { data } = await api.get(`/cryptocurrency/quotes/latest?id=${cryptocurrency[0].id}`);
 
       this.toogleForm();
 
