@@ -2,6 +2,9 @@
   "name": "cryptocurrencies",
   "version": "0.1.0",
   "homepage": "https://matheuspiment.github.io/cryptocurrencies",
+  "repository": "https://github.com/matheuspiment/cryptocurrencies",
+  "author": "Matheus Pimenta <matheuspiment@hotmail.com> (https://github.com/matheuspiment)",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
