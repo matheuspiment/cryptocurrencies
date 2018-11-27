@@ -4,7 +4,7 @@
 
 This web app is a demo app to monitor cryptoccurencies from [CoinMarketCap API](https://pro.coinmarketcap.com/). A online version is available - https://matheuspiment.github.io/cryptocurrencies/.
 
-![Launch Image](https://github.com/matheuspiment/cryptocurrencies/blob/master/docs/images/launch.png)
+![Launch Image](/docs/images/launch.png)
 
 * [How to use?](#how-to-use)
     * [Notifications](#notifications)
